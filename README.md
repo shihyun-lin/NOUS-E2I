@@ -1,74 +1,58 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/npiYAKgd)
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=20464692&assignment_repo_type=AssignmentRepo)
 
-# 02 Homework - Neurosynth ETL
+# 📘 Neurosynth ETL — 02 Homework
 
-學號：R13546008
+**Author:** Shih-Yun Lin（R13546008）
+**Course:** PSY5261 Psychoinformatics & Neuroinformatics (NTU)
 
-## 作業流程說明
-
-本作業目標：  
-**從 PubMed 查詢 "fmri & love" 相關論文，萃取目標論文的 [X, Y, Z] 座標，並整理成 info_data.csv 格式。**
-
-
-### 1. PubMed 查詢與下載 
-
-- 使用 requests 下載 PubMed 查詢結果 HTML（關鍵字："fmri & love"）。
-- 設定 headers 模擬瀏覽器，避免被網站阻擋。
-- 儲存 HTML 檔案：`front_psychol_fmri_love.html`
-
-### 2. 解析 PMIDs
-
-- 用 BeautifulSoup 解析 HTML，萃取所有 PMIDs。
-- 使用正則表達式取得 PMID 清單。
-
-> **說明：第 1、2 步為測試與前置流程，正式作業資料處理從第 3 步開始。**
-
-### 3. 下載目標論文 HTML
-
-- 目標論文（3 篇）：
-  - https://pmc.ncbi.nlm.nih.gov/articles/PMC4863427
-  - https://pmc.ncbi.nlm.nih.gov/articles/PMC7223160
-  - https://pmc.ncbi.nlm.nih.gov/articles/PMC7264388
-- 用 requests 批次下載，儲存於 `pmc_html/` 資料夾。
-
-### 4. 萃取論文基本資訊
-
-- 用 BeautifulSoup 解析每篇 HTML，萃取：
-  - PMID
-  - PMCID（只保留數字）
-  - Keywords（去除多餘標點、排序、標準化）
-
-### 5. 表格座標萃取
-
-- 針對每篇論文的目標 Table，將表格圖片存於 `Table/` 資料夾。
-- 使用 LM Studio API（或其他 LLM）進行圖片 OCR，萃取 [X, Y, Z] 座標。
-- 將所有座標整理成 DataFrame。
-
-### 6. 合併與輸出
-
-- 合併 meta 資訊與座標資料，整理成 info_data.csv。
+本專案實作一個可重現的 **Neurosynth 風格 ETL**：從 PubMed/PMC 抓取「`fmri & love`」主題的開放獲取論文，萃取表格中的 **\[X, Y, Z]** 座標與基本中介資訊（PMID、PMCID、Keywords），整併為 `info_data.csv` 以支援後續分析。
 
 ---
 
-## 主要使用套件
+## 🚀 Overview
 
-- pandas
-- requests
-- BeautifulSoup
-- re
-- base64
-- json
+**🎯 目標與範圍**
+
+* 取得 3 篇 PMC 開放論文的 HTML，抽取 **PMID / PMCID / Keywords / \[X,Y,Z]**。
+* 產出單一整潔資料表 `info_data.csv`（可直接下游分析）。
+* 提供 Notebook 與固定資料夾結構，確保他人能重現。
+
+
+---
+
+## 🧩 Method（ETL Pipeline）
+
+1. **PubMed 查詢與下載**
+   使用 `requests` 以關鍵字「`fmri & love`」抓取搜尋頁，存為 `front_psychol_fmri_love.html`（加上 headers 模擬瀏覽器）。
+2. **解析 PMIDs**
+   `BeautifulSoup` + 正則式，擷取結果頁中的 **PMID** 集合（僅保留數字）。
+3. **下載目標論文（3 篇）**
+   批次下載以下 **PMC Open Access** 頁面至 `pmc_html/`：
+
+   * [https://pmc.ncbi.nlm.nih.gov/articles/PMC4863427](https://pmc.ncbi.nlm.nih.gov/articles/PMC4863427)
+   * [https://pmc.ncbi.nlm.nih.gov/articles/PMC7223160](https://pmc.ncbi.nlm.nih.gov/articles/PMC7223160)
+   * [https://pmc.ncbi.nlm.nih.gov/articles/PMC7264388](https://pmc.ncbi.nlm.nih.gov/articles/PMC7264388)
+4. **基本欄位萃取**
+   逐篇 HTML 解析：**PMID、PMCID（數字化）、Keywords**（去除雜訊、標準化、排序）。
+5. **表格座標萃取**
+   針對目標表格（必要時將表格區塊擷取為圖片存入 `Table/`），以 LLM/OCR（如 LM Studio 本地模型）或規則法抽取 **\[X,Y,Z]**。
+6. **整合與輸出**
+   合併 meta 與座標，輸出 **`info_data.csv`**；可與 `info_data_answer.csv` 對照。
+
+> ✍️ 1–2 步為前置/測試；正式處理從第 3 步開始。
+
 
 ---
 
-## 執行方式
+## 📦 Environment
 
-1. 依序執行 Jupyter Notebook (`ETL.ipynb`) 各區塊。
-2. 確認 `pmc_html/`、`Table/` 資料夾已存在並有對應檔案。
-3. 執行完畢後，會產生 `info_data.csv`，可與 `info_data_answer.csv` 比對。
+* **Python** 3.12
+* 主要套件：`pandas`, `requests`, `beautifulsoup4`, `lxml`, `regex`（或 `re`）, `ipykernel`
+  （若用 LLM/OCR：LM Studio 或相容客戶端）
 
 ---
+
 ## AI 互動紀錄
 
 - 本專案所有與 LLM（如 GPT-4.1、LM Studio API）的互動過程（包含 prompt、回應、座標萃取 JSON 結果等），皆已儲存於 `chat_history/` 資料夾。
