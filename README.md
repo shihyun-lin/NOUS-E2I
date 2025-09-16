@@ -10,7 +10,6 @@
 本作業目標：  
 **從 PubMed 查詢 "fmri & love" 相關論文，萃取目標論文的 [X, Y, Z] 座標，並整理成 info_data.csv 格式。**
 
----
 
 ### 1. PubMed 查詢與下載 
 
