@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Neurosynth 即時關鍵字搜尋</title>
+    <link rel="preconnect" href="https://mil.psy.ntu.edu.tw:5000" crossorigin>
+    <link rel="preconnect" href="https://hpc.psy.ntu.edu.tw:5000" crossorigin>
+    <link rel="dns-prefetch" href="https://hpc.psy.ntu.edu.tw:5000">
+    <link rel="preload" as="style" href="./assets/app.css">
+    <link rel="stylesheet" href="./assets/app.css" />
+    <link rel="modulepreload" href="./assets/app.js">
+  </head>
+  <body class="min-h-screen bg-[var(--bg)] text-[var(--text)] antialiased">
+    <div class="mx-auto max-w-7xl px-6 py-14">
+      <main class="grid gap-6 lg:grid-cols-[360px_1fr] xl:grid-cols-[380px_1fr]">
+        <aside class="rounded-[18px] border border-[var(--border)] bg-[var(--panel-2)] p-6 text-[color:var(--text)] shadow-[0_16px_32px_-18px_rgba(15,34,51,0.18)]">
+          <h2 class="text-lg font-semibold text-[color:var(--text-strong)]">搜尋 Neurosynth 術語</h2>
+          <p class="mt-1 text-sm text-[color:var(--muted)]">輸入關鍵字即可即時帶出術語、相關詞與研究。</p>
+          <div class="relative mt-5">
+            <input id="termInput" type="text" placeholder="輸入例如 amygdala、emotion、memory..." class="w-full rounded-full border border-[var(--border)] bg-white px-5 py-3 text-base text-[color:var(--text-strong)] placeholder:text-[color:var(--subtle)] focus:border-[color:var(--brand-500)] focus:ring-0" />
+            <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-[color:var(--subtle)]">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m21 21-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" /></svg>
+            </div>
+          </div>
+          <button id="reloadTerms" class="mt-4 w-full rounded-full border border-transparent bg-[color:var(--brand-500)] px-4 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(47,140,143,0.6)] transition hover:bg-[color:var(--brand-600)]">重新載入術語</button>
+          <div class="mt-8">
+            <p class="text-sm font-semibold text-[color:var(--brand-500)]">術語搜尋結果</p>
+            <div class="mt-3 flex items-center justify-between text-sm text-[color:var(--muted)]">
+              <span class="font-medium text-[color:var(--text-strong)]">術語列表</span><span id="termCount" class="text-[color:var(--brand-500)]"></span>
+            </div>
+            <div id="termList" class="mt-3 flex flex-col gap-2"></div>
+          </div>
+        </aside>
+        <div class="space-y-6">
+          <section class="rounded-[18px] border border-[var(--border)] bg-[var(--panel-2)] p-6 text-[color:var(--text)] shadow-[0_16px_32px_-18px_rgba(15,34,51,0.18)]">
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <small class="text-xs uppercase tracking-[0.4em] text-[color:var(--subtle)]">相關術語</small>
+                <h3 class="text-lg font-semibold text-[color:var(--text-strong)]" id="selectedTerm">尚未選擇</h3>
+              </div>
+              <p id="relatedHint" class="text-xs text-right text-[color:var(--muted)]">搜尋或選取術語後，即時顯示共現詞</p>
+            </div>
+            <div id="relatedList" class="mt-4 flex flex-wrap gap-2"></div>
+            <div class="mt-5 flex flex-wrap items-center gap-2 text-xs">
+              <button type="button" id="operatorHeader" class="rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[color:var(--muted)] font-semibold">選擇布林運算與範例</button>
+              <button type="button" data-rel-operator="AND" class="rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[color:var(--text)] transition hover:border-[color:var(--brand-400)] hover:text-[color:var(--text-strong)]">AND</button>
+              <button type="button" data-rel-operator="OR" class="rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[color:var(--text)] transition hover:border-[color:var(--brand-400)] hover:text-[color:var(--text-strong)]">OR</button>
+              <button type="button" data-rel-operator="NOT" class="rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[color:var(--text)] transition hover:border-[color:var(--brand-400)] hover:text-[color:var(--text-strong)]">NOT</button>
+              <button type="button" data-rel-operator="(" class="rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[color:var(--text)] transition hover:border-[color:var(--brand-400)] hover:text-[color:var(--text-strong)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-400)]">(</button>
+              <button type="button" data-rel-operator=")" class="rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[color:var(--text)] transition hover:border-[color:var(--brand-400)] hover:text-[color:var(--text-strong)] focus:outline-none focus:ring-2 focus:ring-[color:var(--brand-400)]">)</button>
+            </div>
+          </section>
+          <section class="rounded-[18px] border border-[var(--border)] bg-[var(--panel-2)] p-6 text-[color:var(--text)] shadow-[0_16px_32px_-18px_rgba(15,34,51,0.18)]">
+            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-[color:var(--brand-500)]">布林查詢</p>
+            <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <input id="queryInput" type="text" placeholder="例如：amygdala NOT emotion、prefrontal AND memory" class="flex-1 rounded-full border border-[var(--border)] bg-white px-5 py-3 text-[color:var(--text-strong)] placeholder:text-[color:var(--subtle)] focus:border-[color:var(--brand-500)] focus:ring-0" />
+              <div class="flex justify-end">
+                <button id="clearQuery" class="inline-flex items-center justify-center rounded-full border border-[var(--border)] bg-white px-5 py-3 text-sm text-[color:var(--text)] transition hover:border-[color:var(--brand-400)] hover:text-[color:var(--text-strong)]">清除</button>
+              </div>
+            </div>
+            <p id="queryStatus" class="mt-4 text-sm text-[color:var(--muted)]">尚未查詢。輸入布林語句即可即時查詢結果。</p>
+            <div class="mt-6 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-3 text-sm uppercase tracking-[0.2em] text-[color:var(--brand-500)]">
+                <span class="text-xl font-semibold text-[color:var(--text-strong)]">研究結果</span>
+                <div class="flex items-center gap-2 text-xs tracking-normal">
+                  <button id="sortOrderToggle" class="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)] bg-white px-3 py-1.5 text-[0.85rem] font-semibold text-[color:var(--brand-500)] transition hover:border-[color:var(--brand-400)] hover:text-[color:var(--brand-600)] disabled:cursor-not-allowed disabled:opacity-50">年份：新→舊</button>
+                  <span id="studyCount" class="text-[0.85rem] font-medium tracking-[0.2em] text-[color:var(--brand-500)]">0/0</span>
+                </div>
+              </div>
+              <div id="studyList" class="space-y-4"></div>
+              <button id="loadMoreStudies" class="hidden w-full rounded-full border border-[var(--border)] bg-white px-5 py-3 text-sm text-[color:var(--text)] transition hover:border-[color:var(--brand-400)] hover:text-[color:var(--text-strong)]">顯示更多結果</button>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="./assets/app.js"></script>
+  </body>
+</html>

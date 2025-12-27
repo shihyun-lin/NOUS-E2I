@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    font-family: "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --bg: #08141C;
+    --panel: #FFFFFF;
+    --bg-card: #E8F3F1;
+    --ink-900: #0F2233;
+    --ink-600: #243849;
+    --ink-400: #5B6B75;
+    --brand-600: #216572;
+    --brand-500: #2F8C8F;
+    --brand-400: #4FA7A7;
+    --brand-200: #BFE2DE;
+    --panel-2: #E8F3F1;
+    --border: #D9E5E2;
+    --text-strong: #0F2233;
+    --text: #243849;
+    --muted: #5B6B75;
+    --subtle: #95A7B3;
+    --ring: #4FA7A7;
+    --accent-a: #2F8C8F;
+    --accent-b: #216572;
+    --chip: #BFE2DE;
+    --chip-border: rgba(47, 140, 143, 0.45);
+    --badge: rgba(47, 140, 143, 0.18);
+    --badge-text: #216572;
+    --success: #10B981;
+    --warn: #F59E0B;
+    --danger: #F43F5E;
+  }
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .vertical-rl { writing-mode: vertical-rl; }
+}

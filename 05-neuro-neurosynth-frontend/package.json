@@ -1,0 +1,17 @@
+{
+  "name": "neurosynth-dark",
+  "private": true,
+  "scripts": {
+    "dev": "tailwindcss -i ./src/styles.css -o ./assets/app.css --watch",
+    "build": "tailwindcss -i ./src/styles.css -o ./assets/app.css --minify",
+    "deploy": "npm run build && gh-pages -d . -x \"src\" -x \"tailwind.config.js\" -x \"postcss.config.js\" -x \"package.json\" -x \"package-lock.json\" -x \"README.md\" -x \"gpt-5-codex.pdf\""
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.19",
+    "autoprefixer": "^10.4.20",
+    "gh-pages": "^6.3.0",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14"
+  }
+}
