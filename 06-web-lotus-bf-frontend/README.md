@@ -171,11 +171,3 @@ Current features and planned enhancements:
 ## ⚖️ License
 
 Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-## 📬 Contact & Contributing
-
-*   This project is developed by **NOUS Team** in collaboration with **NTU Psychology Information Group**.
-*   Issues, pull requests, and feedback are welcome!
-*   For questions, please contact the project maintainers.
