@@ -1,0 +1,13 @@
+# Build output
+dist/
+
+# Node dependencies
+node_modules/
+
+# Local backups and logs
+backups/
+
+# IDE artifacts
+.DS_Store
+.vscode/
+.idea/
