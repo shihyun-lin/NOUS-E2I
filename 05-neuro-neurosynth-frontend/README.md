@@ -2,7 +2,7 @@
 
 This project provides a **static frontend interface** for querying Neurosynth neuroimaging terminology. It connects to the NTU Psychology backend API and enables real-time term searching, Boolean queries, and study exploration with an elegant, modern UI.
 
-[Explore Docs »](#about-the-project)
+[🌐 Live Demo](https://ntu-info.github.io/neurosynth-frontend-shih-yunLin/) · [Explore Docs »](#about-the-project)
 
 <br />
 
